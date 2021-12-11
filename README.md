@@ -93,25 +93,25 @@ auto eth0
 iface eth0 inet static
 	address 10.44.0.2
 	netmask 255.255.255.252
-  gateway 10.44.0.1
+  	gateway 10.44.0.1
 
 auto eth1
 iface eth1 inet static
 	address 10.44.0.129
 	netmask 255.255.255.128
-  gateway 10.44.0.1
+  	gateway 10.44.0.1
 
 auto eth2
 iface eth2 inet static
 	address 10.44.4.1
 	netmask 255.255.252.0
-  gateway 10.44.0.1
+  	gateway 10.44.0.1
 
 auto eth3
 iface eth3 inet static
 	address 10.44.0.9
 	netmask 255.255.255.248
-  gateway 10.44.0.1
+  	gateway 10.44.0.1
 ```
 
 Blueno, Cipher, Elena, Fukurou
@@ -126,10 +126,20 @@ auto eth0
 iface eth0 inet static
 	address 10.44.0.10
 	netmask 255.255.255.248
-  gateway 10.44.0.9
+  	gateway 10.44.0.9
 ```
 
 # Routing
+Kami melakukan routing di Foosha
+```
+route add -net 10.44.0.128 netmask 255.255.255.128 gw 10.44.0.2 #blueno
+route add -net 10.44.4.0 netmask 255.255.252.0 gw 10.44.0.2 #cipher
+route add -net 10.44.2.0  netmask 255.255.254.0 gw 10.44.0.6 #elena
+
+route add -net 10.44.1.0  netmask 255.255.255.0 gw 10.44.0.6 #fukuru
+route add -net 10.44.0.8  netmask 255.255.255.248 gw 10.44.0.2 #doriki/jipangu
+route add -net 10.44.0.16  netmask 255.255.255.248 gw 10.44.0.6 #jorge/maingate
+```
 
 # NO 1
 Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Foosha menggunakan iptables, tetapi Luffy tidak ingin menggunakan MASQUERADE.
