@@ -125,7 +125,7 @@ Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk meng
 
 Pada Foosha dilakukan konfigurasi seperti berikut ini.
 
-Foosha
+### Foosha
 ```
 echo '
 auto eth0
@@ -154,11 +154,11 @@ kami menggunakan command -t nat NAT Table pada -A POSTROUTING chain untuk -j SNA
 
 Untuk testing, kami mencoba kirim ping keluar pada Foosha dan Jipangu
 
-Foosha
+### Foosha
 ```
 ping 8.8.8.8
 ```
-Jipangu
+### Jipangu
 ```
 ping 8.8.8.8
 ```
@@ -168,15 +168,15 @@ ping 8.8.8.8
 # NO 2
 Kalian diminta untuk mendrop semua akses HTTP dari luar Topologi kalian pada server yang memiliki ip DHCP dan DNS Server demi menjaga keamanan.
 
-Foosha
+### Foosha
 ```
 iptables -A FORWARD -d 10.42.0.16/29 -i eth0 -p tcp -m tcp --dport 80 -j DROP
 ```
 Kita menggunakan -A FORWARD untuk menyaring paket dengan -p tcp -m tcp yaitu protokol TCP dari luar topologi menuju ke DHCP Server JIPANGU dan DNS Server DORIKI (yang berada di satu subnet yang sama yaitu -d 10.42.0.16/29), dimana akses SSH (yang memiliki --dport 80 port 80) yang masuk ke DHCP Server JIPANGU dan DNS Server DORIKI melalui interfaces eth0 dari DHCP Server JIPANGU dan DNS Server DORIKI dengan command -i eth0 untuk DROP kami gunakan command -j DROP
 
-Testing
+## Testing
 
-Elena
+### Elena
 ```
 nmap -p 80 10.42.2.2
 ```
