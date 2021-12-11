@@ -32,7 +32,7 @@ D. Tugas berikutnya adalah memberikan ip pada subnet Blueno, Cipher, Fukurou, da
 Berikut adalah topologi dan pembagian subnet
 
 ![image](https://user-images.githubusercontent.com/73151831/145679520-b9a5a950-5767-4348-b329-a09666f40bc8.png)
-![image](https://user-images.githubusercontent.com/73151831/145679637-69294cb2-738c-4f6b-8baf-56ee915e361d.png)
+![image](https://user-images.githubusercontent.com/73151831/145680359-574062b9-6090-4a8b-b93a-72818d31e3e9.png)
 
 Berikut Tree yang kami buat
 
