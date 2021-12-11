@@ -135,22 +135,22 @@ iface eth0 inet static
     broadcast 192.168.122.1
 auto eth1
 iface eth1 inet static
-    address 10.42.0.5
+    address 10.44.0.5
     netmask 255.255.255.252
-    broadcast 10.42.0.7
+    broadcast 10.44.0.7
  
 auto eth2
 iface eth2 inet static
-    address 10.42.0.1
+    address 10.44.0.1
     netmask 255.255.255.252
-    broadcast 10.42.0.3
+    broadcast 10.44.0.3
 ' > /etc/network/interfaces
 ```
 ```
-iptables -t nat -A POSTROUTING -s 10.42.0.0/21 -o eth0 -j SNAT --to-source 192.168.122.2
+iptables -t nat -A POSTROUTING -s 10.44.0.0/21 -o eth0 -j SNAT --to-source 192.168.122.2
 ```
 
-kami menggunakan command -t nat NAT Table pada -A POSTROUTING chain untuk -j SNAT mengubah source address yang awalnya berupa private IPv4 address yang memiliki 16-bit blok dari private IP addresses yaitu -s 10.42.0.0/21 menjadi --to-source 192.168.122.2 IP eth0 Foosha yaitu 192.168.122.2 karena Foosha merupakan router yang terhubung ke internet melalui eth0.
+kami menggunakan command -t nat NAT Table pada -A POSTROUTING chain untuk -j SNAT mengubah source address yang awalnya berupa private IPv4 address yang memiliki 16-bit blok dari private IP addresses yaitu -s 10.44.0.0/21 menjadi --to-source 192.168.122.2 IP eth0 Foosha yaitu 192.168.122.2 karena Foosha merupakan router yang terhubung ke internet melalui eth0.
 
 Untuk testing, kami mencoba kirim ping keluar pada Foosha dan Jipangu
 
@@ -170,13 +170,51 @@ Kalian diminta untuk mendrop semua akses HTTP dari luar Topologi kalian pada ser
 
 ### Foosha
 ```
-iptables -A FORWARD -d 10.42.0.16/29 -i eth0 -p tcp -m tcp --dport 80 -j DROP
+iptables -A FORWARD -d 10.44.0.16/29 -i eth0 -p tcp -m tcp --dport 80 -j DROP
 ```
-Kita menggunakan -A FORWARD untuk menyaring paket dengan -p tcp -m tcp yaitu protokol TCP dari luar topologi menuju ke DHCP Server JIPANGU dan DNS Server DORIKI (yang berada di satu subnet yang sama yaitu -d 10.42.0.16/29), dimana akses SSH (yang memiliki --dport 80 port 80) yang masuk ke DHCP Server JIPANGU dan DNS Server DORIKI melalui interfaces eth0 dari DHCP Server JIPANGU dan DNS Server DORIKI dengan command -i eth0 untuk DROP kami gunakan command -j DROP
+Kita menggunakan -A FORWARD untuk menyaring paket dengan -p tcp -m tcp yaitu protokol TCP dari luar topologi menuju ke DHCP Server JIPANGU dan DNS Server DORIKI (yang berada di satu subnet yang sama yaitu -d 10.44.0.16/29), dimana akses SSH (yang memiliki --dport 80 port 80) yang masuk ke DHCP Server JIPANGU dan DNS Server DORIKI melalui interfaces eth0 dari DHCP Server JIPANGU dan DNS Server DORIKI dengan command -i eth0 untuk DROP kami gunakan command -j DROP
 
 ## Testing
 
 ### Elena
 ```
-nmap -p 80 10.42.2.2
+nmap -p 80 10.44.2.2
 ```
+
+
+# NO 3
+Karena kelompok kalian maksimal terdiri dari 3 orang. Luffy meminta kalian untuk membatasi DHCP dan DNS Server hanya boleh menerima maksimal 3 koneksi ICMP secara bersamaan menggunakan iptables, selebihnya didrop.
+
+### Jipangu
+```
+iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP
+```
+
+### Doriki
+```
+iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP
+```
+
+Kita menggunakan command -A INPUT untuk menyaring paket dan command -p icmp agar protokol ICMP atau ping yang masuk dibatasi kami gunakan juga -m connlimit --connlimit-above 3 yang artinya hanya sebatas maksimal 3 koneksi saja yang dapat tersambung dan command --connlimit-mask 0 untuk memperbolehkan akses darimana saja, sehingga lebih dari itu akan di DROP command-j DROP
+
+## Testing
+### Elena
+```
+ping 10.44.0.18
+```
+
+### Fukurou
+```
+ping 10.44.0.18
+```
+
+### Blueno
+```
+ping 10.44.0.18
+```
+
+### Cipher
+```
+ping 10.44.0.18
+```
+
