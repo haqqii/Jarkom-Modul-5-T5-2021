@@ -185,6 +185,7 @@ nmap -p 80 10.44.2.2
 # NO 3
 Karena kelompok kalian maksimal terdiri dari 3 orang. Luffy meminta kalian untuk membatasi DHCP dan DNS Server hanya boleh menerima maksimal 3 koneksi ICMP secara bersamaan menggunakan iptables, selebihnya didrop.
 
+## Setting
 ### Jipangu
 ```
 iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP
@@ -218,3 +219,75 @@ ping 10.44.0.18
 ping 10.44.0.18
 ```
 
+
+# NO 4
+Akses dari subnet Blueno dan Cipher hanya diperbolehkan pada pukul 07.00 - 15.00 pada hari Senin sampai Kamis.
+
+## Setting
+### Doriki
+```
+# cipher
+iptables -A INPUT -s 10.44.4.0/22 -m time --weekdays Fri,Sat,Sun -j REJECT
+iptables -A INPUT -s 10.44.4.0/22 -m time --timestart 00:00 --timestop 06:59 --weekdays Mon,Tue,Wed,Thu -j REJECT
+iptables -A INPUT -s 10.44.4.0/22 -m time --timestart 15:01 --timestop 23:59 --weekdays Mon,Tue,Wed,Thu -j REJECT
+
+# blueno
+iptables -A INPUT -s 10.44.0.128/25 -m time --weekdays Fri,Sat,Sun -j REJECT
+iptables -A INPUT -s 10.44.0.128/25 -m time --timestart 00:00 --timestop 06:59 --weekdays Mon,Tue,Wed,Thu -j REJECT
+iptables -A INPUT -s 10.44.0.128/25 -m time --timestart 15:01 --timestop 23:59 --weekdays Mon,Tue,Wed,Thu -j REJECT
+```
+
+- Di sini kami menggunakan -A INPUT untuk menyaring paket yang masuk dari -s 10.44.4.0/22 subnet CIPHER dan 10.44.0.128/25 subnet BLUENO
+
+- Untuk -m time --weekdays Fri, Sat,Sun di jam berapapun pada hari Jumat, Sabtu dan Minggu agar ditolak dengan command -j REJECT
+
+- kemudian ditambahkan command -A INPUT -m time --timestart 00:00 --timestop 06:59 untuk menyaring paket di waktu jam 00:00 sampai dengan jam 06:59 --weekdays Mon,Tue,Wed,Thu pada hari Senin, Selasa, Rabu, Kamis agar ditolak kami tambahkan command -j REJECT
+
+- Dan ditambahkan command -A INPUT -m time --timestart 15:01 --timestop 23:59 untuk menyaring paket di waktu jam 15:01 sampai dengan jam 23:59 --weekdays Mon,Tue,Wed,Thu pada hari Senin, Selasa, Rabu, Kamis agar ditolak dengan command -j REJECT
+
+## Testing
+### Cipher
+```
+ping 10.44.0.19
+```
+
+### Blueno
+```
+ping 10.44.0.19
+```
+
+
+# NO 5
+Akses dari subnet Elena dan Fukuro hanya diperbolehkan pada pukul 15.01 hingga pukul 06.59 setiap harinya.
+
+## Setting
+### Doriki
+```
+iptables -A INPUT -s 10.44.2.0/23 -m time --timestart 07:00 --timestop 15:00 -j REJECT
+
+iptables -A INPUT -s 10.44.1.0/24 -m time --timestart 07:00 --timestop 15:00 -j REJECT
+```
+
+Di sini digunakan -A INPUT untuk menyaring paket yang masuk dari -s 10.44.2.0/23 subnet ELENA dan 10.44.1.0/24 subnet Fukurou -m time --timestart 07:00 --timestop 15:00 di waktu jam 07:00 sampai dengan jam 15:00 di hari apapun untuk batasan aksesnya dan digunakan command -j REJECT agar ditolak jika diluar batas waktunya.
+
+## Testing
+### Elena
+```
+ping 10.44.0.19
+```
+
+### Fukuro
+```
+ping 10.44.0.19
+```
+
+
+# NO 6
+Karena kita memiliki 2 Web Server, Luffy ingin Guanhao disetting sehingga setiap request dari client yang mengakses DNS Server akan didistribusikan secara bergantian pada Jorge dan Maingate
+```
+iptables -A PREROUTING -t nat -p tcp -d 10.44.0.19 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.44.0.11:80
+
+iptables -A PREROUTING -t nat -p tcp -d 10.44.0.19 -j DNAT --to-destination 10.44.0.10:80
+```
+
+Pada kasus ini kami menggunakan Load Balancing untuk mendistribusikan koneksi. Kami menggunakan -A PREROUTING pada -t nat untuk mengubah destination IP yang awalnya menuju ke 10.44.0.19 DNS Server DORIKI menjadi ke 10.44.0.11:80 Server JORGE port 80 dan 10.44.0.10:80 Server MAINGATE port 80.
