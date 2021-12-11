@@ -10,8 +10,10 @@ Nama Anggota Kelompok :
 
 Setelah kalian mempelajari semua modul yang telah diberikan, Luffy ingin meminta bantuan untuk terakhir kalinya kepada kalian. Dan kalian dengan senang hati mau membantu Luffy.
 
-1. Tugas pertama kalian yaitu membuat topologi jaringan sesuai dengan rancangan yang diberikan Luffy
-2. Keterangan :
+A. Tugas pertama kalian yaitu membuat topologi jaringan sesuai dengan rancangan yang diberikan Luffy
+
+![image](https://user-images.githubusercontent.com/73151831/145679469-fa6897cf-2bd5-49ca-9215-0fbce0b3fc1f.png)
+Keterangan :
 Doriki adalah DNS Server
 Jipangu adalah DHCP Server
 Maingate dan Jorge adalah Web Server
@@ -19,9 +21,9 @@ Jumlah Host pada Blueno adalah 100 host
 Jumlah Host pada Cipher adalah 700 host
 Jumlah Host pada Elena adalah 300 host
 Jumlah Host pada Fukurou adalah 200 host
-3. Karena kalian telah belajar subnetting dan routing, Luffy ingin meminta kalian untuk membuat topologi tersebut menggunakan teknik CIDR atau VLSM. setelah melakukan subnetting,
-4. Kalian juga diharuskan melakukan Routing agar setiap perangkat pada jaringan tersebut dapat terhubung.
-5. Tugas berikutnya adalah memberikan ip pada subnet Blueno, Cipher, Fukurou, dan Elena secara dinamis menggunakan bantuan DHCP server. Kemudian kalian ingat bahwa kalian harus setting DHCP Relay pada router yang menghubungkannya.
+B. Karena kalian telah belajar subnetting dan routing, Luffy ingin meminta kalian untuk membuat topologi tersebut menggunakan teknik CIDR atau VLSM. setelah melakukan subnetting,
+C. Kalian juga diharuskan melakukan Routing agar setiap perangkat pada jaringan tersebut dapat terhubung.
+D. Tugas berikutnya adalah memberikan ip pada subnet Blueno, Cipher, Fukurou, dan Elena secara dinamis menggunakan bantuan DHCP server. Kemudian kalian ingat bahwa kalian harus setting DHCP Relay pada router yang menghubungkannya.
 
 
 # Jawaban
@@ -29,9 +31,16 @@ Jumlah Host pada Fukurou adalah 200 host
 ### Perhitungan VLSM
 Berikut adalah topologi dan pembagian subnet
 
-Berikut Tree yang kami dapat :
+![image](https://user-images.githubusercontent.com/73151831/145679520-b9a5a950-5767-4348-b329-a09666f40bc8.png)
+![image](https://user-images.githubusercontent.com/73151831/145679637-69294cb2-738c-4f6b-8baf-56ee915e361d.png)
 
-Berikut Perhitungan IP yang kami dapat:
+Berikut Tree yang kami buat
+
+![image](https://user-images.githubusercontent.com/73151831/145679556-23041004-e532-42ac-b002-665fdc8daa4d.png)
+
+Berikut Perhitungan IP yang kami buat
+
+![image](https://user-images.githubusercontent.com/73151831/145679614-205a0074-4f48-4182-b131-13c23f2bbb83.png)
 
 ### Konfigurasi pada setiap node
 
@@ -119,6 +128,8 @@ iface eth0 inet static
 	netmask 255.255.255.248
   gateway 10.44.0.9
 ```
+
+# Routing
 
 # NO 1
 Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Foosha menggunakan iptables, tetapi Luffy tidak ingin menggunakan MASQUERADE.
