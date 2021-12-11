@@ -119,3 +119,64 @@ iface eth0 inet static
 	netmask 255.255.255.248
   gateway 10.44.0.9
 ```
+
+# NO 1
+Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Foosha menggunakan iptables, tetapi Luffy tidak ingin menggunakan MASQUERADE.
+
+Pada Foosha dilakukan konfigurasi seperti berikut ini.
+
+Foosha
+```
+echo '
+auto eth0
+iface eth0 inet static
+    address 192.168.122.2
+    netmask 255.255.255.0
+    broadcast 192.168.122.1
+auto eth1
+iface eth1 inet static
+    address 10.42.0.5
+    netmask 255.255.255.252
+    broadcast 10.42.0.7
+ 
+auto eth2
+iface eth2 inet static
+    address 10.42.0.1
+    netmask 255.255.255.252
+    broadcast 10.42.0.3
+' > /etc/network/interfaces
+```
+```
+iptables -t nat -A POSTROUTING -s 10.42.0.0/21 -o eth0 -j SNAT --to-source 192.168.122.2
+```
+
+kami menggunakan command -t nat NAT Table pada -A POSTROUTING chain untuk -j SNAT mengubah source address yang awalnya berupa private IPv4 address yang memiliki 16-bit blok dari private IP addresses yaitu -s 10.42.0.0/21 menjadi --to-source 192.168.122.2 IP eth0 Foosha yaitu 192.168.122.2 karena Foosha merupakan router yang terhubung ke internet melalui eth0.
+
+Untuk testing, kami mencoba kirim ping keluar pada Foosha dan Jipangu
+
+Foosha
+```
+ping 8.8.8.8
+```
+Jipangu
+```
+ping 8.8.8.8
+```
+
+
+
+# NO 2
+Kalian diminta untuk mendrop semua akses HTTP dari luar Topologi kalian pada server yang memiliki ip DHCP dan DNS Server demi menjaga keamanan.
+
+Foosha
+```
+iptables -A FORWARD -d 10.42.0.16/29 -i eth0 -p tcp -m tcp --dport 80 -j DROP
+```
+Kita menggunakan -A FORWARD untuk menyaring paket dengan -p tcp -m tcp yaitu protokol TCP dari luar topologi menuju ke DHCP Server JIPANGU dan DNS Server DORIKI (yang berada di satu subnet yang sama yaitu -d 10.42.0.16/29), dimana akses SSH (yang memiliki --dport 80 port 80) yang masuk ke DHCP Server JIPANGU dan DNS Server DORIKI melalui interfaces eth0 dari DHCP Server JIPANGU dan DNS Server DORIKI dengan command -i eth0 untuk DROP kami gunakan command -j DROP
+
+Testing
+
+Elena
+```
+nmap -p 80 10.42.2.2
+```
